@@ -3,7 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import groovy.json.*
-def members = new File('members.txt').text
+def prs = new URL("https://api.github.com/repos/dbsystel/playground/pulls?state=all&sort=created&direction=desc").text
+prs = new JsonSlurper().parseText(prs)
+def members = []
+prs.each { pr ->
+    if (pr.created_at.startsWith("2019-10-18")) {
+        //println pr.created_at
+        //println pr.user.login
+        members << pr.user.login
+    }
+}
+members << "vicbergquist"
+members << "rdmueller"
+members << "ahus1"
+members = members.unique()
+//println members
 entry = [:]
 def template = """
 <entry>
@@ -26,19 +40,21 @@ def template = """
 </entry>
 """
 def board = []
-members.eachLine { member ->
-    if (member.trim()) {
-        def pullRequests = new URL("https://hacktoberfestchecker.jenko.me/prs?username="+member).text
-        pullRequests = new JsonSlurper().parseText(pullRequests)
-        println "-"*80
-        println member
-        println pullRequests.userImage
-        pullRequests.prs.each { pr ->
-            println pr.repo_name
-            println pr.created_at
+members.each { member ->
+    def pullRequests = new URL("https://hacktoberfestchecker.jenko.me/prs?username="+member).text
+    pullRequests = new JsonSlurper().parseText(pullRequests)
+    //println "-"*80
+    //println member
+    //println pullRequests.userImage
+    def numPrs = 0
+    pullRequests.prs.each { pr ->
+        //println pr.repo_name
+        //println pr.created_at
+        if (pr.created_at.startsWith("October 18th")) {
+            numPrs ++
         }
-        board<<[name: member, prs:pullRequests.prs.size(), userImage: pullRequests.userImage]
     }
+    board<<[name: member, prs:numPrs, userImage: pullRequests.userImage]
 }
 def html = ""
 board.sort {it.prs}.reverse().each { currentEntry ->
@@ -50,7 +66,7 @@ new File("build/.").mkdirs()
 // copy css file
 new File("build/leaderboard.css").write(new File("leaderboard.css").text)
 // fetch agenda file as master
-def htmlMaster = new URL ("https://hacktoberffm.de/Schedule").text
+def htmlMaster = new URL ("https://hacktoberffm.de/leaderboard").text
 // turn relative reference into absolute ones
 htmlMaster = htmlMaster.replaceAll('"/','"https://hacktoberffm.de/')
 htmlMaster = htmlMaster.replaceAll('[(]/','(https://hacktoberffm.de/')

@@ -1,0 +1,11 @@
+= Hacktober Leaderboard
+
+This is the leaderboard code for the 🎃 https://hacktoberffm.de[hacktoberffm.de] 🎃 event.
+
+To register for the leaderboard, create a PR to this repository by submitting a new "Hello World"
+
+If you like to, you could eben submit a PR for a better README which explains how to submit a PR 😊!
+
+Have fun,
+
+your Hacktoberffm.de Team!
