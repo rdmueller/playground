@@ -76,7 +76,7 @@ htmlMaster = htmlMaster.replaceAll('https://hacktoberffm.de/leaderboard" class="
 htmlMaster = htmlMaster.replace('<style','<link rel="stylesheet" type="text/css" href="leaderboard.css"><style')
 // replace body
 def bodyTemplate = new File("body.template").text
-htmlMaster = htmlMaster.replaceAll('<div><h1>.*</p></div>',bodyTemplate)
+htmlMaster = htmlMaster.replaceAll('<div id="__nuxt">.*Loading...</div></div></div>',bodyTemplate)
 // replace placeholder with content
 htmlMaster = htmlMaster.replaceAll("%content%",html)
 new File("build/index.html").write( htmlMaster)
